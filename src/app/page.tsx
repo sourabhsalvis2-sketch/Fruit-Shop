@@ -53,7 +53,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
 
       if (error) {
         // If login fails, try to sign up (for first time users)
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -72,7 +72,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
       // If we get here, login was successful
       onLogin();
 
-    } catch (error: any) {
+    } catch (error: string | any) {
       console.error('Auth error:', error);
       if (error.message.includes('Invalid login credentials')) {
         alert('Invalid email or password. Please try again.');
@@ -91,7 +91,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
     setLoading(true);
     try {
       // Disable RLS temporarily for testing
-      const { data, error } = await supabase.auth.signInAnonymously();
+      const { error } = await supabase.auth.signInAnonymously();
       if (error) throw error;
       onLogin();
     } catch (error: any) {
