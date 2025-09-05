@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { Apple, Plus, Trash2, LogOut, Printer, MessageCircle, ArrowLeft } from 'lucide-react';
-
 // Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -145,6 +144,9 @@ function Login({ onLogin }: { onLogin: () => void }) {
     </div>
   );
 }
+
+
+
 
 // Bill Creator Component
 function BillCreator({ onBillCreated }: { onBillCreated: (bill: Bill) => void }) {
@@ -319,25 +321,29 @@ function BillPreview({ bill, onBack }: { bill: Bill; onBack: () => void }) {
 
   const handlePrint = () => window.print();
 
-  const sendWhatsApp = () => {
-    const message = `🧾 Sai Fruit Suppliers - BILL
+  const sendWhatsApp = async (whatsappNumber: string) => {
+    if (typeof window === "undefined") return; // Ensure client side
 
-📅 Date: ${new Date(bill.created_at).toLocaleDateString()}
-🔢 Bill No: ${bill.bill_number}
+    const html2pdf = (await import("html2pdf.js")).default;
 
-👤 Customer: ${bill.customer_name}
-📞 Mobile: ${bill.customer_mobile}
+    const element = document.getElementById("bill-pdf");
+    if (!element) return;
 
-🛒 ITEMS:
-${bill.items.map(item => `${item.fruit} - ${item.quantity} ${item.unit} @ ₹${item.rate} = ₹${item.amount.toFixed(2)}`).join('\n')}
+    const opt = {
+      margin: 0.5,
+      filename: `Bill_${bill.bill_number}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+    };
 
-💰 TOTAL: ₹${bill.total_amount.toFixed(2)}
+    const pdfBlob = await html2pdf().set(opt).from(element).outputPdf("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
 
-Thank you! 🍎`;
-
+    const message = `🧾 Sai Fruit Suppliers - BILL\n\nDownload your invoice here: ${pdfUrl}`;
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
-    setShowWhatsappModal(false);
+
+    window.open(url, "_blank");
   };
 
   return (
@@ -361,7 +367,7 @@ Thank you! 🍎`;
       </div>
 
       {/* Bill */}
-      <div className="bg-white rounded-lg shadow-lg border max-w-2xl mx-auto p-8">
+      <div id="bill-pdf" className="bg-white rounded-lg shadow-lg border max-w-2xl mx-auto p-8">
         <div className="text-center mb-8 border-b pb-6">
           <div className="bg-gradient-to-r from-green-500 to-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <Apple className="text-white text-2xl" />
