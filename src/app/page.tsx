@@ -46,7 +46,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
 
     try {
       // First try to sign in
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
