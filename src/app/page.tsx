@@ -145,9 +145,6 @@ function Login({ onLogin }: { onLogin: () => void }) {
   );
 }
 
-
-
-
 // Bill Creator Component
 function BillCreator({ onBillCreated }: { onBillCreated: (bill: Bill) => void }) {
   const [customerName, setCustomerName] = useState('');
@@ -238,6 +235,13 @@ function BillCreator({ onBillCreated }: { onBillCreated: (bill: Bill) => void })
       </div>
 
       <div className="space-y-3 mb-6">
+        <div className="flex justify-between items-center">
+          <h3 className="font-medium">Items</h3>
+          <button onClick={addItem} className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg">
+            <Plus className="h-4 w-4" />
+            Add Item
+          </button>
+        </div>
 
         {items.map((item) => (
           <div key={item.id} className="grid grid-cols-2 md:grid-cols-6 gap-2 p-3 border rounded-lg">
@@ -288,14 +292,6 @@ function BillCreator({ onBillCreated }: { onBillCreated: (bill: Bill) => void })
         ))}
       </div>
 
-      <div className="flex justify-between items-center">
-        <h3 className="font-medium">Items</h3>
-        <button onClick={addItem} className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg">
-          <Plus className="h-4 w-4" />
-          Add Item
-        </button>
-      </div>
-
       <div className="border-t pt-4 mb-6">
         <div className="flex justify-between text-xl font-semibold">
           <span>Total:</span>
@@ -321,29 +317,25 @@ function BillPreview({ bill, onBack }: { bill: Bill; onBack: () => void }) {
 
   const handlePrint = () => window.print();
 
-  const sendWhatsApp = async (whatsappNumber: string) => {
-    if (typeof window === "undefined") return; // Ensure client side
+  const sendWhatsApp = () => {
+    const message = `🧾 Sai Fruit Suppliers - BILL
 
-    const html2pdf = (await import("html2pdf.js")).default;
+📅 Date: ${new Date(bill.created_at).toLocaleDateString()}
+🔢 Bill No: ${bill.bill_number}
 
-    const element = document.getElementById("bill-pdf");
-    if (!element) return;
+👤 Customer: ${bill.customer_name}
+📞 Mobile: ${bill.customer_mobile}
 
-    const opt = {
-      margin: 0.5,
-      filename: `Bill_${bill.bill_number}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
-    };
+🛒 ITEMS:
+${bill.items.map(item => `${item.fruit} - ${item.quantity} ${item.unit} @ ₹${item.rate} = ₹${item.amount.toFixed(2)}`).join('\n')}
 
-    const pdfBlob = await html2pdf().set(opt).from(element).outputPdf("blob");
-    const pdfUrl = URL.createObjectURL(pdfBlob);
+💰 TOTAL: ₹${bill.total_amount.toFixed(2)}
 
-    const message = `🧾 Sai Fruit Suppliers - BILL\n\nDownload your invoice here: ${pdfUrl}`;
+Thank you! 🍎`;
+
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-
-    window.open(url, "_blank");
+    window.open(url, '_blank');
+    setShowWhatsappModal(false);
   };
 
   return (
@@ -367,7 +359,7 @@ function BillPreview({ bill, onBack }: { bill: Bill; onBack: () => void }) {
       </div>
 
       {/* Bill */}
-      <div id="bill-pdf" className="bg-white rounded-lg shadow-lg border max-w-2xl mx-auto p-8">
+      <div className="bg-white rounded-lg shadow-lg border max-w-2xl mx-auto p-8">
         <div className="text-center mb-8 border-b pb-6">
           <div className="bg-gradient-to-r from-green-500 to-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <Apple className="text-white text-2xl" />
