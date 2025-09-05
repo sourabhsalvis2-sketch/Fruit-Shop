@@ -141,17 +141,6 @@ function Login({ onLogin }: { onLogin: () => void }) {
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
 
-          {/* Development Quick Login - Remove in production */}
-          <div className="border-t pt-4">
-            <button
-              type="button"
-              onClick={quickLogin}
-              disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm"
-            >
-              Quick Login (Development)
-            </button>
-          </div>
         </form>
       </div>
     </div>
