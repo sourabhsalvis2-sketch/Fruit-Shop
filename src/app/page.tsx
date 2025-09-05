@@ -108,8 +108,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
           <div className="bg-gradient-to-r from-green-500 to-orange-500 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
             <Apple className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Fresh Fruit Store</h1>
-          <p className="text-gray-600">Billing System</p>
+          <h1 className="text-3xl font-bold text-gray-900">Sai Fruit Suppliers</h1>
         </div>
 
         <form className="bg-white p-8 rounded-2xl shadow-xl space-y-4" onSubmit={handleLogin}>
@@ -320,7 +319,7 @@ function BillPreview({ bill, onBack }: { bill: Bill; onBack: () => void }) {
   const handlePrint = () => window.print();
 
   const sendWhatsApp = () => {
-    const message = `🧾 FRESH FRUIT STORE - BILL
+    const message = `🧾 Sai Fruit Suppliers - BILL
 
 📅 Date: ${new Date(bill.created_at).toLocaleDateString()}
 🔢 Bill No: ${bill.bill_number}
@@ -366,20 +365,19 @@ Thank you! 🍎`;
           <div className="bg-gradient-to-r from-green-500 to-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <Apple className="text-white text-2xl" />
           </div>
-          <h1 className="text-2xl font-bold">FRESH FRUIT STORE</h1>
-          <p className="text-gray-600">123 Fruit Market, City - 12345</p>
-          <p className="text-gray-600">Phone: +91-9876543210</p>
+          <h1 className="text-2xl font-bold">Sai Fruit Suppliers</h1>
+          <p className="text-gray-600">Dasara Chowk, Gadhinglaj</p>
+          <p className="text-gray-600">Mobile: 9860121156 / 9226959588</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div>
-            <h3 className="font-semibold mb-2">Bill To:</h3>
-            <p>{bill.customer_name}</p>
-            <p>{bill.customer_mobile}</p>
+            <p><b>Name : </b> {bill.customer_name}</p>
+            <p><b>Mobile : </b> {bill.customer_mobile}</p>
           </div>
-          <div className="text-right">
-            <p>Bill No: {bill.bill_number}</p>
-            <p>Date: {new Date(bill.created_at).toLocaleDateString()}</p>
+          <div className="text-left">
+            <p><b>Bill No : </b>{bill.bill_number}</p>
+            <p><b>Date : </b>{new Date(bill.created_at).toLocaleDateString()}</p>
           </div>
         </div>
 
@@ -405,22 +403,22 @@ Thank you! 🍎`;
         </table>
 
         <div className="border-t-2 pt-4 mb-8">
-          <div className="flex justify-between text-xl font-bold">
-            <span>TOTAL:</span>
+          <div className="flex justify-between text-xl font-bold" >
+            <span className=''>TOTAL:</span>
             <span>₹{bill.total_amount.toFixed(2)}</span>
           </div>
         </div>
+        <div className="grid grid-cols-2 gap-4 mb-6"></div>
 
-        <div className="text-center text-sm text-gray-600 border-t pt-4">
-          <p className="mb-4">Thank you for your business!</p>
+        <div className="text-center text-sm ">
           <div className="flex justify-between">
             <div>
-              <p className="mb-2">Customer Signature</p>
-              <div className="border-b border-gray-400 w-32"></div>
-            </div>
-            <div>
-              <p className="mb-2">Authorized Signature</p>
-              <div className="border-b border-gray-400 w-32"></div>
+              <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center bg-white mx-auto mb-4">
+                <img src="/globe.svg" alt="Logo" className="object-contain w-10 h-10" />
+              </div>
+
+              <p className="mb-2">Authorized Stamp and Signature</p>
+              <div className="border-b border-gray-400 w-50"></div>
             </div>
           </div>
         </div>
@@ -509,7 +507,7 @@ export default function FruitBillingApp() {
             <div className="bg-green-600 p-2 rounded-lg">
               <Apple className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-xl font-semibold">Fresh Fruit Store</h1>
+            <h1 className="text-xl font-semibold">Sai Fruit Suppliers</h1>
           </div>
           <div className="flex items-center gap-4">
             {view === 'preview' && (
