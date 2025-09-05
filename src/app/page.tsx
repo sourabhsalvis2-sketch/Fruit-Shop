@@ -359,7 +359,7 @@ Thank you! 🍎`;
       </div>
 
       {/* Bill */}
-      <div className="bg-white rounded-lg shadow-lg border max-w-2xl mx-auto p-8">
+      <div id='bill-content' className="bg-white rounded-lg shadow-lg border max-w-2xl mx-auto p-8">
         <div className="text-center mb-8 border-b pb-6">
           <div className="bg-gradient-to-r from-green-500 to-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <Apple className="text-white text-2xl" />
