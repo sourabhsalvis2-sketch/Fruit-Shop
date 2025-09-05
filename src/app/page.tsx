@@ -236,13 +236,6 @@ function BillCreator({ onBillCreated }: { onBillCreated: (bill: Bill) => void })
       </div>
 
       <div className="space-y-3 mb-6">
-        <div className="flex justify-between items-center">
-          <h3 className="font-medium">Items</h3>
-          <button onClick={addItem} className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg">
-            <Plus className="h-4 w-4" />
-            Add Item
-          </button>
-        </div>
 
         {items.map((item) => (
           <div key={item.id} className="grid grid-cols-2 md:grid-cols-6 gap-2 p-3 border rounded-lg">
@@ -291,6 +284,14 @@ function BillCreator({ onBillCreated }: { onBillCreated: (bill: Bill) => void })
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="flex justify-between items-center">
+        <h3 className="font-medium">Items</h3>
+        <button onClick={addItem} className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg">
+          <Plus className="h-4 w-4" />
+          Add Item
+        </button>
       </div>
 
       <div className="border-t pt-4 mb-6">
