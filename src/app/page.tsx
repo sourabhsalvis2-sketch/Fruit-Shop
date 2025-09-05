@@ -508,26 +508,6 @@ export default function FruitBillingApp() {
             </div>
             <h1 className="text-xl font-semibold">Sai Fruit Suppliers</h1>
           </div>
-          <div className="flex items-center gap-4">
-            {view === 'preview' && (
-              <button
-                onClick={() => {
-                  setView('create');
-                  setCurrentBill(null);
-                }}
-                className="px-4 py-2 text-green-600 hover:bg-green-50 rounded-lg"
-              >
-                New Bill
-              </button>
-            )}
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </button>
-          </div>
         </div>
       </header>
 
