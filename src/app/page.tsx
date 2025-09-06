@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { Apple, Plus, Trash2, LogOut, Printer, MessageCircle, ArrowLeft } from 'lucide-react';
+import { generateBillPdf } from "./generateBillPdf";
 // Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -200,7 +201,11 @@ function BillCreator({ onBillCreated }: { onBillCreated: (bill: Bill) => void })
         id: `bill-${Date.now()}` // Generate a simple ID
       };
 
-      // Since we're using simple password auth, we'll just create the bill locally
+      // ✅ NEW: Save bill into Supabase
+      const { error } = await supabase.from('bills').insert([billData]);
+      if (error) throw error;
+
+      // Existing local handling
       onBillCreated(billData);
       setCustomerName('');
       setCustomerMobile('');
@@ -212,6 +217,7 @@ function BillCreator({ onBillCreated }: { onBillCreated: (bill: Bill) => void })
       setLoading(false);
     }
   };
+
 
   return (
     <div className="bg-white rounded-xl shadow-sm border p-6">
@@ -317,7 +323,8 @@ function BillPreview({ bill, onBack }: { bill: Bill; onBack: () => void }) {
 
   const handlePrint = () => window.print();
 
-  const sendWhatsApp = () => {
+  const sendWhatsApp = async () => {
+    const pdfUrl = await generateBillPdf(bill);
     const message = `🧾 Sai Fruit Suppliers - BILL
 
 📅 Date: ${new Date(bill.created_at).toLocaleDateString()}
@@ -330,6 +337,8 @@ function BillPreview({ bill, onBack }: { bill: Bill; onBack: () => void }) {
 ${bill.items.map(item => `${item.fruit} - ${item.quantity} ${item.unit} @ ₹${item.rate} = ₹${item.amount.toFixed(2)}`).join('\n')}
 
 💰 TOTAL: ₹${bill.total_amount.toFixed(2)}
+
+📄 Download your bill here: ${pdfUrl}
 
 Thank you! 🍎`;
 
