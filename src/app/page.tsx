@@ -316,16 +316,21 @@ function BillCreator({ onBillCreated }: { onBillCreated: (bill: Bill) => void })
   );
 }
 
+
+
 // Bill Preview Component
 function BillPreview({ bill, onBack }: { bill: Bill; onBack: () => void }) {
   const [whatsappNumber, setWhatsappNumber] = useState(bill.customer_mobile);
   const [showWhatsappModal, setShowWhatsappModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handlePrint = () => window.print();
 
   const sendWhatsApp = async () => {
-    const pdfUrl = await generateBillPdf(bill);
-    const message = `🧾 Sai Fruit Suppliers - BILL
+    setLoading(true); // Show loader
+    try {
+      const pdfUrl = await generateBillPdf(bill);
+      const message = `🧾 Sai Fruit Suppliers - BILL
 
 📅 Date: ${new Date(bill.created_at).toLocaleDateString()}
 🔢 Bill No: ${bill.bill_number}
@@ -333,19 +338,20 @@ function BillPreview({ bill, onBack }: { bill: Bill; onBack: () => void }) {
 👤 Customer: ${bill.customer_name}
 📞 Mobile: ${bill.customer_mobile}
 
-🛒 ITEMS:
-${bill.items.map(item => `${item.fruit} - ${item.quantity} ${item.unit} @ ₹${item.rate} = ₹${item.amount.toFixed(2)}`).join('\n')}
-
 💰 TOTAL: ₹${bill.total_amount.toFixed(2)}
 
 📄 Download your bill here: ${pdfUrl}
 
 Thank you! 🍎`;
 
-    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
-    setShowWhatsappModal(false);
+      const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+      setShowWhatsappModal(false);
+    } finally {
+      setLoading(false); // Hide loader
+    }
   };
+
 
   return (
     <div className="space-y-6">
