@@ -70,17 +70,17 @@ export async function generateBillPdf(bill: any) {
         stampReader.onload = () => resolve(stampReader.result as string);
         stampReader.readAsDataURL(stamp);
     });
-    doc.addImage(stampBase64, "PNG", 20, finalY - 5, 40, 20);
+    doc.addImage(stampBase64, "PNG", 20, finalY - 5, 50, 40);
     doc.setFontSize(10);
-    doc.text("Authorized Stamp and Signature", 25, finalY + 20);
+    doc.text("Authorized Stamp and Signature", 25, finalY + 40);
 
     // Total on right side
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.text(`TOTAL: ${bill.total_amount.toFixed(2)}`, 190, finalY, {
         align: "right"
     });
 
-    doc.line(20, finalY + 25, 190, finalY + 25);
+    doc.line(20, finalY + 45, 190, finalY + 45);
 
     // === Upload to Supabase ===
     const pdfBlob = doc.output("blob");

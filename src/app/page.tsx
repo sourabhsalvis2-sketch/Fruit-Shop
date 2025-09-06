@@ -330,17 +330,17 @@ function BillPreview({ bill, onBack }: { bill: Bill; onBack: () => void }) {
     setLoading(true); // Show loader
     try {
       const pdfUrl = await generateBillPdf(bill);
-      const message = `🧾 Sai Fruit Suppliers - BILL
+      const message = ` Sai Fruit Suppliers - BILL
 
-📅 Date: ${new Date(bill.created_at).toLocaleDateString()}
-🔢 Bill No: ${bill.bill_number}
+    Date: ${new Date(bill.created_at).toLocaleDateString()}
+    Bill No: ${bill.bill_number}
 
-👤 Customer: ${bill.customer_name}
-📞 Mobile: ${bill.customer_mobile}
+    Customer: ${bill.customer_name}
+    Mobile: ${bill.customer_mobile}
 
-💰 TOTAL: ₹${bill.total_amount.toFixed(2)}
+    TOTAL: ₹${bill.total_amount.toFixed(2)}
 
-📄 Download your bill here: ${pdfUrl}
+    Download your bill here: ${pdfUrl}
 
 Thank you! 🍎`;
 
@@ -377,7 +377,9 @@ Thank you! 🍎`;
       <div id='bill-content' className="bg-white rounded-lg shadow-lg border max-w-2xl mx-auto p-8">
         <div className="text-center mb-8 border-b pb-6">
           <div className="bg-gradient-to-r from-green-500 to-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Apple className="text-white text-2xl" />
+            <div className="overflow-hidden flex items-center justify-center bg-white mx-auto mb-4">
+              <img src="/apple-logo.png" alt="Logo" className="object-contain w-50 h-20" />
+            </div>
           </div>
           <h1 className="text-2xl font-bold">Sai Fruit Suppliers</h1>
           <p className="text-gray-600">Dasara Chowk, Gadhinglaj</p>
@@ -427,8 +429,8 @@ Thank you! 🍎`;
         <div className="text-center text-sm ">
           <div className="flex justify-between">
             <div>
-              <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center bg-white mx-auto mb-4">
-                <img src="/globe.svg" alt="Logo" className="object-contain w-10 h-10" />
+              <div className="overflow-hidden flex items-center justify-center bg-white mx-auto mb-4">
+                <img src="/signature.png" alt="Logo" className="object-contain w-50 h-40" />
               </div>
 
               <p className="mb-2">Authorized Stamp and Signature</p>
