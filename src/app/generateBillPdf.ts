@@ -8,22 +8,35 @@ const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+async function loadImageAsBase64(url: string, format: "JPEG" | "PNG" = "JPEG", quality = 0.5) {
+    const blob = await fetch(url).then((res) => res.blob());
+    const bitmap = await createImageBitmap(blob);
+
+    // Resize down if needed (for compression)
+    const canvas = document.createElement("canvas");
+    const maxWidth = 200; // scale down logo/signature max width
+    const scale = Math.min(1, maxWidth / bitmap.width);
+
+    canvas.width = bitmap.width * scale;
+    canvas.height = bitmap.height * scale;
+    const ctx = canvas.getContext("2d")!;
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+    return canvas.toDataURL(`image/${format.toLowerCase()}`, quality);
+}
+
 export async function generateBillPdf(bill: any) {
-    const doc = new jsPDF();
+    const doc = new jsPDF({
+        compress: true, // enable built-in compression
+    });
 
     // === Draw outer border ===
     doc.setLineWidth(0.5);
-    doc.rect(10, 10, 190, 277); // x, y, width, height
+    doc.rect(10, 10, 190, 277);
 
     // === Logo ===
-    const logoUrl = "/apple-logo.png";
-    const logo = await fetch(logoUrl).then((res) => res.blob());
-    const reader = new FileReader();
-    const logoBase64: string = await new Promise((resolve) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(logo);
-    });
-    doc.addImage(logoBase64, "PNG", 100 - 10, 12, 20, 20);
+    const logoBase64 = await loadImageAsBase64("/apple-logo.png", "JPEG", 0.6);
+    doc.addImage(logoBase64, "JPEG", 90, 12, 30, 20);
 
     // === Header ===
     doc.setFontSize(18);
@@ -50,40 +63,32 @@ export async function generateBillPdf(bill: any) {
         body: bill.items.map((item: any) => [
             item.fruit,
             `${item.quantity} ${item.unit}`,
-            `${item.rate}`, // removed ₹
-            `${item.amount.toFixed(2)}`
+            `${item.rate}`,
+            `${item.amount.toFixed(2)}`,
         ]),
         theme: "grid",
-        styles: { halign: "center" },
-        headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0] }
+        styles: { halign: "center", fontSize: 10 },
+        headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0] },
     });
 
     // === Total + Signature ===
     const finalY = (doc as any).lastAutoTable.finalY + 15;
     doc.line(20, finalY - 7, 190, finalY - 7);
 
-    // Signature left side
-    const stampUrl = "/signature.png"; // signature image
-    const stamp = await fetch(stampUrl).then((res) => res.blob());
-    const stampReader = new FileReader();
-    const stampBase64: string = await new Promise((resolve) => {
-        stampReader.onload = () => resolve(stampReader.result as string);
-        stampReader.readAsDataURL(stamp);
-    });
-    doc.addImage(stampBase64, "PNG", 20, finalY - 5, 50, 40);
+    const stampBase64 = await loadImageAsBase64("/signature.png", "JPEG", 0.6);
+    doc.addImage(stampBase64, "JPEG", 25, finalY - 5, 40, 25);
     doc.setFontSize(10);
-    doc.text("Authorized Stamp and Signature", 25, finalY + 40);
+    doc.text("Authorized Stamp and Signature", 25, finalY + 25);
 
-    // Total on right side
     doc.setFontSize(12);
     doc.text(`TOTAL: ${bill.total_amount.toFixed(2)}`, 190, finalY, {
-        align: "right"
+        align: "right",
     });
 
-    doc.line(20, finalY + 45, 190, finalY + 45);
+    doc.line(20, finalY + 30, 190, finalY + 30);
 
     // === Upload to Supabase ===
-    const pdfBlob = doc.output("blob");
+    const pdfBlob = doc.output("blob"); // compressed output
     const fileName = `bill-${bill.bill_number}.pdf`;
 
     const { error } = await supabase.storage
@@ -91,7 +96,7 @@ export async function generateBillPdf(bill: any) {
         .upload(fileName, pdfBlob, {
             cacheControl: "3600",
             upsert: true,
-            contentType: "application/pdf"
+            contentType: "application/pdf",
         });
 
     if (error) throw error;
