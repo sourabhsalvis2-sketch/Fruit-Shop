@@ -31,7 +31,7 @@ interface Bill {
 
 const FRUITS = [
   'Apple', 'Banana', 'Orange', 'Mango', 'Grapes', 'Pomegranate',
-  'Papaya', 'Pineapple', 'Watermelon', 'Kiwi', 'Strawberry', 'Guava'
+  'Papaya', 'Pineapple', 'Watermelon', 'Kiwi', 'Strawberry', 'Guava', 'Other'
 ];
 
 // Login Component
@@ -268,6 +268,7 @@ function BillCreator({ onBillCreated }: { onBillCreated: (bill: Bill) => void })
               <option value="kg">Kg</option>
               <option value="dozen">Dozen</option>
               <option value="piece">Piece</option>
+              <option value="piece">Box</option>
             </select>
 
             <input
